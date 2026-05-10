@@ -72,15 +72,28 @@ Explorer formats support `{path}`, `{name}`, and `{cwd}`.
 
 ```lua
 {
-  dir = "~/path/to/refcopy.nvim",
-  config = function()
-    require("refcopy").setup()
-  end,
+  "KudoLayton/refcopy.nvim",
+  main = "refcopy",
+  opts = {},
   keys = {
     { "<leader>ry", ":RefCopy<CR>", mode = "x", desc = "Copy file reference" },
     { "<leader>rY", ":RefCopyAbsolute<CR>", mode = "x", desc = "Copy absolute file reference" },
     { "<leader>re", ":RefCopyExplorer<CR>", mode = "x", desc = "Copy explorer paths" },
     { "<leader>rE", ":RefCopyExplorerAbsolute<CR>", mode = "x", desc = "Copy absolute explorer paths" },
+  },
+}
+```
+
+To configure it:
+
+```lua
+{
+  "KudoLayton/refcopy.nvim",
+  main = "refcopy",
+  opts = {
+    single_line_format = "{path}#L{line}",
+    multi_line_format = "{path}#L{start}-L{end}",
+    explorer_format = "{path}",
   },
 }
 ```
