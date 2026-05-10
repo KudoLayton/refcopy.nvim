@@ -14,18 +14,4 @@ function M.render(template, tokens)
   end))
 end
 
-function M.resolve(formats, default_name, requested_name)
-  local name = requested_name
-  if name == nil or name == "" then
-    name = default_name
-  end
-
-  local template = formats and formats[name]
-  if template == nil then
-    return nil, ("refcopy.nvim: unknown format '%s'"):format(name)
-  end
-
-  return template, nil, name
-end
-
 return M

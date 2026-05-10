@@ -16,24 +16,28 @@ end
 
 refcopy.setup({
   clipboard_register = '"',
-  default_format = "default",
-  default_explorer_format = "default",
-  formats = {
-    default = "{path}:{line}",
-    custom = "[{path}] {start}/{end}",
-  },
-  explorer_formats = {
-    default = "{path}",
-    named = "{name} => {path}",
-  },
+  explorer_format = "{name} => {path}",
 })
 
 vim.cmd("edit README.md")
-vim.cmd("2,4RefCopy")
-assert_contains(vim.fn.getreg('"'), "README.md:2-4", "RefCopy should copy relative path and line range")
+vim.cmd("2,2RefCopy")
+assert_contains(vim.fn.getreg('"'), "README.md#L2", "RefCopy should copy default single-line GitHub-style reference")
 
-vim.cmd("2,4RefCopy custom")
-assert_contains(vim.fn.getreg('"'), "[README.md] 2/4", "RefCopy should use requested named format")
+vim.cmd("2,4RefCopy")
+assert_contains(vim.fn.getreg('"'), "README.md#L2-L4", "RefCopy should copy default multiline GitHub-style reference")
+
+refcopy.setup({
+  clipboard_register = '"',
+  single_line_format = "{path}:{line}",
+  multi_line_format = "[{path}] {start}/{end}",
+  explorer_format = "{name} => {path}",
+})
+
+vim.cmd("2,2RefCopy")
+assert_contains(vim.fn.getreg('"'), "README.md:2", "RefCopy should use custom single-line format")
+
+vim.cmd("2,4RefCopy")
+assert_contains(vim.fn.getreg('"'), "[README.md] 2/4", "RefCopy should use custom multiline format")
 
 local netrw_buf = vim.api.nvim_create_buf(false, true)
 vim.api.nvim_set_current_buf(netrw_buf)
@@ -45,7 +49,7 @@ vim.api.nvim_buf_set_lines(netrw_buf, 0, -1, false, {
   "lua/",
 })
 
-vim.cmd("2,3RefCopyExplorer named")
+vim.cmd("2,3RefCopyExplorer")
 local explorer_result = vim.fn.getreg('"')
 assert_contains(explorer_result, "README.md =>", "RefCopyExplorer should include file name token")
 assert_contains(explorer_result, "lua =>", "RefCopyExplorer should strip netrw directory marker")

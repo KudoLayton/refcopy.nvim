@@ -12,30 +12,28 @@ local function copy_to_clipboard(text)
   vim.fn.setreg(config.get().clipboard_register, text)
 end
 
-local function complete_file_formats()
-  return vim.tbl_keys(config.get().formats or {})
-end
-
-local function complete_explorer_formats()
-  return vim.tbl_keys(config.get().explorer_formats or {})
+local function file_template(options, line1, line2)
+  if line1 == line2 then
+    return options.single_line_format
+  end
+  return options.multi_line_format
 end
 
 function M.copy_file(opts)
   opts = opts or {}
   local options = config.get()
-  local template, err = format.resolve(options.formats, options.default_format, opts.format)
-  if err then
-    notify_error(err)
-    return false
-  end
 
   local tokens
-  tokens, err = sources.file(opts.bufnr or 0, opts.line1 or vim.fn.line("."), opts.line2 or vim.fn.line("."), opts.absolute)
+  local line1 = opts.line1 or vim.fn.line(".")
+  local line2 = opts.line2 or vim.fn.line(".")
+  local err
+  tokens, err = sources.file(opts.bufnr or 0, line1, line2, opts.absolute)
   if err then
     notify_error(err)
     return false
   end
 
+  local template = file_template(options, tokens.start, tokens["end"])
   local text = format.render(template, tokens)
   copy_to_clipboard(text)
   vim.notify("refcopy.nvim: copied 1 reference")
@@ -45,13 +43,10 @@ end
 function M.copy_explorer(opts)
   opts = opts or {}
   local options = config.get()
-  local template, err = format.resolve(options.explorer_formats, options.default_explorer_format, opts.format)
-  if err then
-    notify_error(err)
-    return false
-  end
+  local template = options.explorer_format
 
   local items
+  local err
   items, err = sources.explorer(opts.bufnr or 0, opts.line1 or vim.fn.line("."), opts.line2 or vim.fn.line("."), opts.absolute)
   if err then
     notify_error(err)
@@ -77,37 +72,33 @@ local function create_commands()
     M.copy_file({
       line1 = args.line1,
       line2 = args.line2,
-      format = args.args,
       absolute = false,
     })
-  end, { range = true, nargs = "?", complete = complete_file_formats })
+  end, { range = true, nargs = 0 })
 
   vim.api.nvim_create_user_command("RefCopyAbsolute", function(args)
     M.copy_file({
       line1 = args.line1,
       line2 = args.line2,
-      format = args.args,
       absolute = true,
     })
-  end, { range = true, nargs = "?", complete = complete_file_formats })
+  end, { range = true, nargs = 0 })
 
   vim.api.nvim_create_user_command("RefCopyExplorer", function(args)
     M.copy_explorer({
       line1 = args.line1,
       line2 = args.line2,
-      format = args.args,
       absolute = false,
     })
-  end, { range = true, nargs = "?", complete = complete_explorer_formats })
+  end, { range = true, nargs = 0 })
 
   vim.api.nvim_create_user_command("RefCopyExplorerAbsolute", function(args)
     M.copy_explorer({
       line1 = args.line1,
       line2 = args.line2,
-      format = args.args,
       absolute = true,
     })
-  end, { range = true, nargs = "?", complete = complete_explorer_formats })
+  end, { range = true, nargs = 0 })
 end
 
 function M.setup(opts)

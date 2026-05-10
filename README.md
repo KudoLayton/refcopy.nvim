@@ -12,39 +12,44 @@ Copy file references and explorer paths from visual selections into the system c
 
 ## Default Output
 
-The default file format is:
+The default single-line file format is:
 
 ```text
-{path}:{line}
+{path}#L{line}
 ```
 
-For a single selected line, `{line}` is that line number:
+For a single selected line, the default output is:
 
 ```text
-lua/refcopy/init.lua:24
+lua/refcopy/init.lua#L24
 ```
 
-For a multi-line visual selection, `{line}` becomes a range:
+The default multi-line file format is:
 
 ```text
-lua/refcopy/init.lua:24-31
+{path}#L{start}-L{end}
 ```
 
-If you prefer to control the range shape yourself, use `{start}` and `{end}` in a custom format:
-
-```lua
-require("refcopy").setup({
-  formats = {
-    default = "{path}:{line}",
-    github = "{path}#L{start}-L{end}",
-  },
-})
-```
-
-With the `github` format, the same multi-line selection would copy:
+For a multi-line visual selection, the default output is:
 
 ```text
 lua/refcopy/init.lua#L24-L31
+```
+
+Explorer commands copy one selected entry per line. The default explorer format is:
+
+```text
+{path}
+```
+
+If you prefer a different shape, configure the single-line, multi-line, and explorer formats directly:
+
+```lua
+require("refcopy").setup({
+  single_line_format = "{path}:{line}",
+  multi_line_format = "{path}:{start}-{end}",
+  explorer_format = '"{path}"',
+})
 ```
 
 ## Configuration
@@ -52,16 +57,9 @@ lua/refcopy/init.lua#L24-L31
 ```lua
 require("refcopy").setup({
   clipboard_register = "+",
-  default_format = "default",
-  default_explorer_format = "default",
-  formats = {
-    default = "{path}:{line}",
-    github = "{path}#L{start}-L{end}",
-  },
-  explorer_formats = {
-    default = "{path}",
-    quoted = '"{path}"',
-  },
+  single_line_format = "{path}#L{line}",
+  multi_line_format = "{path}#L{start}-L{end}",
+  explorer_format = "{path}",
 })
 ```
 
@@ -85,12 +83,6 @@ Explorer formats support `{path}`, `{name}`, and `{cwd}`.
     { "<leader>rE", ":RefCopyExplorerAbsolute<CR>", mode = "x", desc = "Copy absolute explorer paths" },
   },
 }
-```
-
-To use a named format for one mapping:
-
-```lua
-{ "<leader>rg", ":RefCopy github<CR>", mode = "x", desc = "Copy GitHub-style reference" }
 ```
 
 ## Notes

@@ -2,14 +2,9 @@ local M = {}
 
 local defaults = {
   clipboard_register = "+",
-  default_format = "default",
-  default_explorer_format = "default",
-  formats = {
-    default = "{path}:{line}",
-  },
-  explorer_formats = {
-    default = "{path}",
-  },
+  single_line_format = "{path}#L{line}",
+  multi_line_format = "{path}#L{start}-L{end}",
+  explorer_format = "{path}",
 }
 
 M.options = vim.deepcopy(defaults)
