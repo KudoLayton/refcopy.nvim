@@ -4,10 +4,10 @@ Copy file references and explorer paths from visual selections into the system c
 
 ## Features
 
-- `:'<,'>RefCopy` copies the current file path and selected line range.
-- `:'<,'>RefCopyAbsolute` uses an absolute file path.
-- `:'<,'>RefCopyExplorer` copies selected paths from `netrw` or `oil.nvim`.
-- `:'<,'>RefCopyExplorerAbsolute` uses absolute explorer paths.
+- `:'<,'>RefCopy` copies the current visual selection. In file buffers it copies a file reference; in supported explorer buffers it copies selected paths.
+- `:'<,'>RefCopyAbsolute` does the same with absolute paths.
+- `:'<,'>RefCopyExplorer` explicitly copies selected paths from `netrw` or `oil.nvim`.
+- `:'<,'>RefCopyExplorerAbsolute` explicitly copies absolute explorer paths.
 - Formats are configurable with simple `{token}` placeholders.
 
 ## Default Output
@@ -36,7 +36,7 @@ For a multi-line visual selection, the default output is:
 lua/refcopy/init.lua#L24-L31
 ```
 
-Explorer commands copy one selected entry per line. The default explorer format is:
+In `netrw` and `oil.nvim` buffers, `RefCopy` copies one selected entry per line. The default explorer format is:
 
 ```text
 {path}
@@ -77,9 +77,7 @@ Explorer formats support `{path}`, `{name}`, and `{cwd}`.
   opts = {},
   keys = {
     { "<leader>ry", ":RefCopy<CR>", mode = "x", desc = "Copy file reference" },
-    { "<leader>rY", ":RefCopyAbsolute<CR>", mode = "x", desc = "Copy absolute file reference" },
-    { "<leader>re", ":RefCopyExplorer<CR>", mode = "x", desc = "Copy explorer paths" },
-    { "<leader>rE", ":RefCopyExplorerAbsolute<CR>", mode = "x", desc = "Copy absolute explorer paths" },
+    { "<leader>rY", ":RefCopyAbsolute<CR>", mode = "x", desc = "Copy absolute reference" },
   },
 }
 ```

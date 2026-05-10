@@ -67,9 +67,18 @@ function M.copy_explorer(opts)
   return true
 end
 
+function M.copy(opts)
+  opts = opts or {}
+  local bufnr = opts.bufnr or 0
+  if sources.is_explorer(bufnr) then
+    return M.copy_explorer(opts)
+  end
+  return M.copy_file(opts)
+end
+
 local function create_commands()
   vim.api.nvim_create_user_command("RefCopy", function(args)
-    M.copy_file({
+    M.copy({
       line1 = args.line1,
       line2 = args.line2,
       absolute = false,
@@ -77,7 +86,7 @@ local function create_commands()
   end, { range = true, nargs = 0 })
 
   vim.api.nvim_create_user_command("RefCopyAbsolute", function(args)
-    M.copy_file({
+    M.copy({
       line1 = args.line1,
       line2 = args.line2,
       absolute = true,

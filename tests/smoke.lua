@@ -49,10 +49,13 @@ vim.api.nvim_buf_set_lines(netrw_buf, 0, -1, false, {
   "lua/",
 })
 
-vim.cmd("2,3RefCopyExplorer")
+vim.cmd("2,3RefCopy")
 local explorer_result = vim.fn.getreg('"')
-assert_contains(explorer_result, "README.md =>", "RefCopyExplorer should include file name token")
-assert_contains(explorer_result, "lua =>", "RefCopyExplorer should strip netrw directory marker")
+assert_contains(explorer_result, "README.md =>", "RefCopy should auto-detect netrw and include file name token")
+assert_contains(explorer_result, "lua =>", "RefCopy should auto-detect netrw and strip directory marker")
+
+vim.cmd("2,3RefCopyExplorer")
+assert_contains(vim.fn.getreg('"'), "README.md =>", "RefCopyExplorer should remain available")
 
 package.loaded.oil = nil
 vim.bo[netrw_buf].filetype = "oil"

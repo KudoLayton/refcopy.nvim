@@ -124,4 +124,10 @@ function M.explorer(bufnr, line1, line2, absolute)
   return nil, ("refcopy.nvim: unsupported explorer buffer type '%s'"):format(filetype)
 end
 
+function M.is_explorer(bufnr)
+  bufnr = bufnr or 0
+  local filetype = vim.bo[bufnr].filetype
+  return filetype == "oil" or filetype == "netrw"
+end
+
 return M
