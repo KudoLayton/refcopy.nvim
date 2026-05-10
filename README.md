@@ -10,6 +10,43 @@ Copy file references and explorer paths from visual selections into the system c
 - `:'<,'>RefCopyExplorerAbsolute` uses absolute explorer paths.
 - Formats are configurable with simple `{token}` placeholders.
 
+## Default Output
+
+The default file format is:
+
+```text
+{path}:{line}
+```
+
+For a single selected line, `{line}` is that line number:
+
+```text
+lua/refcopy/init.lua:24
+```
+
+For a multi-line visual selection, `{line}` becomes a range:
+
+```text
+lua/refcopy/init.lua:24-31
+```
+
+If you prefer to control the range shape yourself, use `{start}` and `{end}` in a custom format:
+
+```lua
+require("refcopy").setup({
+  formats = {
+    default = "{path}:{line}",
+    github = "{path}#L{start}-L{end}",
+  },
+})
+```
+
+With the `github` format, the same multi-line selection would copy:
+
+```text
+lua/refcopy/init.lua#L24-L31
+```
+
 ## Configuration
 
 ```lua
